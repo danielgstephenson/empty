@@ -1,20 +1,20 @@
 import { Circle, Vec2 } from 'planck'
-import { Fighter } from '../actors/fighter'
+import { Guide } from '../actors/guide'
 import { Feature } from './feature'
 
 export class Torso extends Feature {
   static radius = 0.5
-  fighter: Fighter
+  guide: Guide
   alive = true
 
-  constructor (fighter: Fighter) {
-    super(fighter, {
+  constructor (guide: Guide) {
+    super(guide, {
       shape: new Circle(Vec2(0, 0), Torso.radius),
       density: 1,
       friction: 0,
       restitution: 0
     })
-    this.fighter = fighter
+    this.guide = guide
     this.label = 'torso'
   }
 }

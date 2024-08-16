@@ -1,5 +1,5 @@
 import { Torso } from '../features/torso'
-import { FighterSummary } from '../summaries/fighterSummary'
+import { GuideSummary } from '../summaries/guideSummary'
 import { PlayerSummary } from '../summaries/playerSummary'
 import { Arena } from '../actors/arena'
 import { Camera } from './camera'
@@ -8,7 +8,7 @@ export class Renderer {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   camera = new Camera()
-  fighterSummaries: FighterSummary[] = []
+  guideSummaries: GuideSummary[] = []
 
   color1 = 'blue'
   color2 = 'rgb(0,120,0)'
@@ -21,7 +21,7 @@ export class Renderer {
   }
 
   readSummary (summary: PlayerSummary): void {
-    this.fighterSummaries = summary.game.fighters
+    this.guideSummaries = summary.game.guides
     this.id = summary.id
   }
 
@@ -30,18 +30,18 @@ export class Renderer {
     this.setupCanvas()
     this.cameraFollow()
     this.drawArena()
-    this.fighterSummaries.forEach(fighter => {
-      this.drawTorso(fighter)
+    this.guideSummaries.forEach(guide => {
+      this.drawTorso(guide)
     })
   }
 
-  drawTorso (fighter: FighterSummary): void {
+  drawTorso (guide: GuideSummary): void {
     this.setupContext()
-    this.context.fillStyle = fighter.team === 1 ? this.color1 : this.color2
+    this.context.fillStyle = guide.team === 1 ? this.color1 : this.color2
     this.context.beginPath()
     this.context.arc(
-      fighter.position.x,
-      fighter.position.y,
+      guide.position.x,
+      guide.position.y,
       Torso.radius, 0, 2 * Math.PI
     )
     this.context.fill()
@@ -68,9 +68,9 @@ export class Renderer {
   }
 
   cameraFollow (): void {
-    this.fighterSummaries.forEach(fighter => {
-      if (fighter.id === this.id) {
-        this.camera.position = fighter.position
+    this.guideSummaries.forEach(guide => {
+      if (guide.id === this.id) {
+        this.camera.position = guide.position
       }
     })
   }

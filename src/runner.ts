@@ -16,15 +16,15 @@ export class Runner {
     this.time = performance.now()
     const dt = this.game.timeScale * (this.time - oldTime) / 1000
     this.game.preStep()
-    this.game.fighters.forEach(fighter => fighter.preStep())
+    this.game.guides.forEach(guide => guide.preStep())
     this.game.world.step(dt * this.game.config.timeScale)
-    this.game.fighters.forEach(fighter => fighter.postStep())
+    this.game.guides.forEach(guide => guide.postStep())
     this.game.summary = new GameSummary(this.game)
   }
 
   restart (): void {
-    this.game.fighters.forEach(fighter => { fighter.team = 0 })
+    this.game.guides.forEach(guide => { guide.team = 0 })
     this.game.players.forEach(player => player.joinTeam())
-    this.game.fighters.forEach(fighter => fighter.respawn())
+    this.game.guides.forEach(guide => guide.respawn())
   }
 }

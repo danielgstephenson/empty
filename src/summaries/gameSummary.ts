@@ -1,11 +1,11 @@
 import { Game } from '../game'
-import { FighterSummary } from './fighterSummary'
+import { GuideSummary } from './guideSummary'
 
 export class GameSummary {
-  fighters: FighterSummary[]
+  guides: GuideSummary[]
 
   constructor (game: Game) {
-    const fighters = [...game.fighters.values()]
-    this.fighters = fighters.map(fighter => new FighterSummary(fighter))
+    const guides = [...game.guides.values()]
+    this.guides = guides.map(guide => new GuideSummary(guide))
   }
 }

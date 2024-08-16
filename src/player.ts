@@ -1,25 +1,25 @@
-import { Fighter } from './actors/fighter'
+import { Guide } from './actors/guide'
 import { Game } from './game'
 
 export class Player {
   game: Game
   id: string
-  fighter: Fighter
+  guide: Guide
 
   constructor (game: Game, id: string) {
     this.game = game
     this.id = id
-    this.fighter = new Fighter(game, id)
+    this.guide = new Guide(game, id)
     this.game.players.set(id, this)
     this.joinTeam()
   }
 
   joinTeam (): void {
-    this.fighter.joinTeam(this.game.getSmallPlayerTeam())
+    this.guide.joinTeam(this.game.getSmallPlayerTeam())
   }
 
   remove (): void {
-    this.fighter.remove()
+    this.guide.remove()
     this.game.players.delete(this.id)
   }
 }

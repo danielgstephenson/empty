@@ -4,7 +4,7 @@ import { Vec2 } from 'planck'
 import { clampVec, normalize } from '../math'
 import { Torso } from '../features/torso'
 
-export class Fighter extends Actor {
+export class Guide extends Actor {
   static movePower = 0.15
   static maxSpeed = 1
   startTime = 0
@@ -23,13 +23,13 @@ export class Fighter extends Actor {
     })
     this.startTime = performance.now()
     this.torso = new Torso(this)
-    this.label = 'fighter'
+    this.label = 'guide'
     this.body.setMassData({
       mass: 1,
       center: Vec2(0.1, 0),
       I: 0.25
     })
-    this.game.fighters.set(this.id, this)
+    this.game.guides.set(this.id, this)
   }
 
   joinTeam (team: number): void {
@@ -51,14 +51,14 @@ export class Fighter extends Actor {
     return Vec2(0, 0)
   }
 
-  getAllies (): Fighter[] {
-    const fighters = [...this.game.fighters.values()]
-    return fighters.filter(fighter => fighter.team === this.team && fighter.id !== this.id)
+  getAllies (): Guide[] {
+    const guides = [...this.game.guides.values()]
+    return guides.filter(guide => guide.team === this.team && guide.id !== this.id)
   }
 
-  getEnemies (): Fighter[] {
-    const fighters = [...this.game.fighters.values()]
-    return fighters.filter(fighter => fighter.team !== this.team)
+  getEnemies (): Guide[] {
+    const guides = [...this.game.guides.values()]
+    return guides.filter(guide => guide.team !== this.team)
   }
 
   getAllyDistance (position: Vec2): number {
@@ -70,20 +70,20 @@ export class Fighter extends Actor {
 
   preStep (): void {
     const moveDir = this.moveDir.length() > 0 ? this.moveDir : Vec2.mul(this.velocity, -1)
-    const force = Vec2.mul(normalize(moveDir), Fighter.movePower)
+    const force = Vec2.mul(normalize(moveDir), Guide.movePower)
     this.body.applyForce(force, this.body.getPosition())
   }
 
   updateConfiguration (): void {
     this.position = this.body.getPosition()
-    this.velocity = clampVec(this.body.getLinearVelocity(), Fighter.maxSpeed)
+    this.velocity = clampVec(this.body.getLinearVelocity(), Guide.maxSpeed)
     this.body.setLinearVelocity(this.velocity)
   }
 
   postStep (): void {
     if (this.removed) {
       this.game.world.destroyBody(this.body)
-      this.game.fighters.delete(this.id)
+      this.game.guides.delete(this.id)
       return
     }
     this.updateConfiguration()
