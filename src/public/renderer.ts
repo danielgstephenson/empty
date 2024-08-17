@@ -1,4 +1,4 @@
-import { Torso } from '../features/torso'
+import { Core } from '../features/core'
 import { GuideSummary } from '../summaries/guideSummary'
 import { PlayerSummary } from '../summaries/playerSummary'
 import { Arena } from '../actors/arena'
@@ -42,7 +42,7 @@ export class Renderer {
     this.context.arc(
       guide.position.x,
       guide.position.y,
-      Torso.radius, 0, 2 * Math.PI
+      Core.radius, 0, 2 * Math.PI
     )
     this.context.fill()
   }

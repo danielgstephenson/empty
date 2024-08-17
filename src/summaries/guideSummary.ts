@@ -1,5 +1,5 @@
 import { Vec2 } from 'planck'
-import { Guide } from '../actors/guide'
+import { Particle } from '../actors/particle'
 
 export class GuideSummary {
   position: Vec2
@@ -7,7 +7,7 @@ export class GuideSummary {
   id: string
   team: number
 
-  constructor (guide: Guide) {
+  constructor (guide: Particle) {
     this.position = guide.body.getPosition()
     this.angle = guide.body.getAngle()
     this.id = guide.id

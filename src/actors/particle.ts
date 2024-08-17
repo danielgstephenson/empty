@@ -2,16 +2,16 @@ import { Actor } from './actor'
 import { Game } from '../game'
 import { Vec2 } from 'planck'
 import { clampVec, normalize } from '../math'
-import { Torso } from '../features/torso'
+import { Core } from '../features/core'
 
-export class Guide extends Actor {
+export class Particle extends Actor {
   static movePower = 0.15
   static maxSpeed = 1
   startTime = 0
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
   moveDir = Vec2(0, 0)
-  torso: Torso
+  core: Core
   team = 0
 
   constructor (game: Game, id: string) {
@@ -22,8 +22,8 @@ export class Guide extends Actor {
       fixedRotation: true
     })
     this.startTime = performance.now()
-    this.torso = new Torso(this)
-    this.label = 'guide'
+    this.core = new Core(this)
+    this.label = 'particle'
     this.body.setMassData({
       mass: 1,
       center: Vec2(0.1, 0),
@@ -43,7 +43,7 @@ export class Guide extends Actor {
     this.body.setLinearVelocity(Vec2(0, 0))
     this.body.setAngle(0)
     this.body.setAngularVelocity(0)
-    this.torso.alive = true
+    this.core.alive = true
     this.updateConfiguration()
   }
 
@@ -51,12 +51,12 @@ export class Guide extends Actor {
     return Vec2(0, 0)
   }
 
-  getAllies (): Guide[] {
+  getAllies (): Particle[] {
     const guides = [...this.game.guides.values()]
     return guides.filter(guide => guide.team === this.team && guide.id !== this.id)
   }
 
-  getEnemies (): Guide[] {
+  getEnemies (): Particle[] {
     const guides = [...this.game.guides.values()]
     return guides.filter(guide => guide.team !== this.team)
   }
@@ -70,13 +70,13 @@ export class Guide extends Actor {
 
   preStep (): void {
     const moveDir = this.moveDir.length() > 0 ? this.moveDir : Vec2.mul(this.velocity, -1)
-    const force = Vec2.mul(normalize(moveDir), Guide.movePower)
+    const force = Vec2.mul(normalize(moveDir), Particle.movePower)
     this.body.applyForce(force, this.body.getPosition())
   }
 
   updateConfiguration (): void {
     this.position = this.body.getPosition()
-    this.velocity = clampVec(this.body.getLinearVelocity(), Guide.maxSpeed)
+    this.velocity = clampVec(this.body.getLinearVelocity(), Particle.maxSpeed)
     this.body.setLinearVelocity(this.velocity)
   }
 
@@ -87,7 +87,7 @@ export class Guide extends Actor {
       return
     }
     this.updateConfiguration()
-    if (!this.torso.alive) this.respawn()
+    if (!this.core.alive) this.respawn()
   }
 
   remove (): void {

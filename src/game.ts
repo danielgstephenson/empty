@@ -5,7 +5,7 @@ import { Player } from './player'
 import { InputSummary } from './summaries/inputSummary'
 import { GameSummary } from './summaries/gameSummary'
 import { Actor } from './actors/actor'
-import { Guide } from './actors/guide'
+import { Particle } from './actors/particle'
 import { PlayerSummary } from './summaries/playerSummary'
 import { choose } from './math'
 import { Runner } from './runner'
@@ -15,7 +15,7 @@ export class Game {
   world = new World()
   config = new Config()
   actors = new Map<string, Actor>()
-  guides = new Map<string, Guide>()
+  guides = new Map<string, Particle>()
   players = new Map<string, Player>()
   runner = new Runner(this)
   summary = new GameSummary(this)
