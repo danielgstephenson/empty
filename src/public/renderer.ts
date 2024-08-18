@@ -1,14 +1,14 @@
 import { Core } from '../features/core'
-import { GuideSummary } from '../summaries/guideSummary'
 import { PlayerSummary } from '../summaries/playerSummary'
 import { Arena } from '../actors/arena'
 import { Camera } from './camera'
+import { ParticleSummary } from '../summaries/particleSummary'
 
 export class Renderer {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   camera = new Camera()
-  guideSummaries: GuideSummary[] = []
+  particleSummaries: ParticleSummary[] = []
 
   color1 = 'blue'
   color2 = 'rgb(0,120,0)'
@@ -21,30 +21,40 @@ export class Renderer {
   }
 
   readSummary (summary: PlayerSummary): void {
-    this.guideSummaries = summary.game.guides
+    this.particleSummaries = summary.game.particles
     this.id = summary.id
   }
 
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
     this.setupCanvas()
-    this.cameraFollow()
+    // this.cameraFollow()
     this.drawArena()
-    this.guideSummaries.forEach(guide => {
-      this.drawTorso(guide)
+    this.particleSummaries.forEach(particle => {
+      this.drawParticle(particle)
     })
   }
 
-  drawTorso (guide: GuideSummary): void {
+  drawParticle (particle: ParticleSummary): void {
     this.setupContext()
-    this.context.fillStyle = guide.team === 1 ? this.color1 : this.color2
+    this.context.save()
+    this.context.fillStyle = particle.team === 1 ? this.color1 : this.color2
+    this.context.strokeStyle = particle.team === 1 ? this.color1 : this.color2
+    this.context.lineWidth = 0.2
     this.context.beginPath()
     this.context.arc(
-      guide.position.x,
-      guide.position.y,
+      particle.position.x,
+      particle.position.y,
       Core.radius, 0, 2 * Math.PI
     )
-    this.context.fill()
+    this.context.closePath()
+    this.context.clip()
+    if (particle.driven) {
+      this.context.fill()
+    } else {
+      this.context.stroke()
+    }
+    this.context.restore()
   }
 
   drawArena (): void {
@@ -68,9 +78,9 @@ export class Renderer {
   }
 
   cameraFollow (): void {
-    this.guideSummaries.forEach(guide => {
-      if (guide.id === this.id) {
-        this.camera.position = guide.position
+    this.particleSummaries.forEach(particle => {
+      if (particle.id === this.id) {
+        this.camera.position = particle.position
       }
     })
   }

@@ -7,7 +7,7 @@ import { GameSummary } from './summaries/gameSummary'
 import { Actor } from './actors/actor'
 import { Particle } from './actors/particle'
 import { PlayerSummary } from './summaries/playerSummary'
-import { choose } from './math'
+import { choose, range } from './math'
 import { Runner } from './runner'
 import { Arena } from './actors/arena'
 
@@ -15,7 +15,7 @@ export class Game {
   world = new World()
   config = new Config()
   actors = new Map<string, Actor>()
-  guides = new Map<string, Particle>()
+  particles = new Map<string, Particle>()
   players = new Map<string, Player>()
   runner = new Runner(this)
   summary = new GameSummary(this)
@@ -26,6 +26,7 @@ export class Game {
   constructor () {
     console.log('Start Game')
     this.timeScale = this.config.timeScale
+    this.createParticles()
     const io = getIo(this.config)
     io.on('connection', socket => {
       console.log('connect:', socket.id)
@@ -33,8 +34,8 @@ export class Game {
       const player = new Player(this, socket.id)
       socket.on('input', (input: InputSummary) => {
         const moveDir = input.moveDir ?? Vec2(0, 0)
-        player.guide.moveDir.x = moveDir.x ?? 0
-        player.guide.moveDir.y = moveDir.y ?? 0
+        player.particle.moveDir.x = moveDir.x ?? 0
+        player.particle.moveDir.y = moveDir.y ?? 0
         const summary = new PlayerSummary(player)
         socket.emit('summary', summary)
       })
@@ -44,6 +45,17 @@ export class Game {
       socket.on('disconnect', () => {
         console.log('disconnect:', socket.id)
         player.remove()
+      })
+    })
+  }
+
+  createParticles (): void {
+    [1, 2].forEach(team => {
+      range(1, 3).forEach(i => {
+        const x = 0.5 * (2 * Math.random() - 1) * Arena.hx
+        const y = 0.5 * (2 * Math.random() - 1) * Arena.hy
+        const particle = new Particle(this, x, y)
+        particle.team = team
       })
     })
   }
@@ -62,7 +74,7 @@ export class Game {
   getTeamPlayerCount (team: number): number {
     let count = 0
     this.players.forEach(player => {
-      if (player.guide.team === team) count += 1
+      if (player.particle.team === team) count += 1
     })
     return count
   }

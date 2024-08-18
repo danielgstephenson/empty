@@ -7,7 +7,7 @@ export class Wall extends Feature {
     super(actor, {
       shape: new EdgeShape(points[0], points[1]),
       friction: 0,
-      restitution: 0
+      restitution: 1
     })
     this.label = 'wall'
   }
