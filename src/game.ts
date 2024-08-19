@@ -10,6 +10,7 @@ import { PlayerSummary } from './summaries/playerSummary'
 import { choose, range } from './math'
 import { Runner } from './runner'
 import { Arena } from './actors/arena'
+import { Collider } from './collider'
 
 export class Game {
   world = new World()
@@ -18,6 +19,7 @@ export class Game {
   particles = new Map<string, Particle>()
   players = new Map<string, Player>()
   runner = new Runner(this)
+  collider = new Collider(this)
   summary = new GameSummary(this)
   arena = new Arena(this)
 
@@ -51,7 +53,7 @@ export class Game {
 
   createParticles (): void {
     [1, 2].forEach(team => {
-      range(1, 3).forEach(i => {
+      range(1, 4).forEach(i => {
         const x = 0.5 * (2 * Math.random() - 1) * Arena.hx
         const y = 0.5 * (2 * Math.random() - 1) * Arena.hy
         const particle = new Particle(this, x, y)

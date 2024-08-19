@@ -12,9 +12,9 @@ export class Core extends Feature {
       shape: new Circle(Vec2(0, 0), Core.radius),
       density: 1,
       friction: 0,
-      restitution: 1
+      restitution: 0
     })
     this.particle = particle
-    this.label = 'circle'
+    this.label = 'core'
   }
 }

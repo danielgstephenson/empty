@@ -1,4 +1,4 @@
-import { BodyDef, Body, Fixture } from 'planck'
+import { BodyDef, Body, Fixture, Vec2 } from 'planck'
 import { Game } from '../game'
 
 export class Actor {
@@ -6,8 +6,11 @@ export class Actor {
   game: Game
   body: Body
   id: string
-  label = ''
+  label = 'actor'
   removed = false
+  position = Vec2(0, 0)
+  velocity = Vec2(0, 0)
+  contacts: Actor[] = []
 
   constructor (game: Game, id: string, bodyDef: BodyDef) {
     if (game.actors.has(id)) {
@@ -27,5 +30,24 @@ export class Actor {
       fixtures.push(fixture)
     }
     return fixtures
+  }
+
+  updateConfiguration (): void {
+    this.position = this.body.getPosition()
+    this.velocity = this.body.getLinearVelocity()
+  }
+
+  postStep (): void {
+    if (this.removed) {
+      this.game.world.destroyBody(this.body)
+      this.game.particles.delete(this.id)
+      return
+    }
+    this.updateConfiguration()
+  }
+
+  remove (): void {
+    this.game.actors.delete(this.id)
+    this.removed = true
   }
 }

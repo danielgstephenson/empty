@@ -1,7 +1,7 @@
 import { Actor } from './actor'
 import { Game } from '../game'
 import { Vec2 } from 'planck'
-import { clampVec, dirToFrom, normalize } from '../math'
+import { dirToFrom, normalize } from '../math'
 import { Core } from '../features/core'
 import { Arena } from './arena'
 
@@ -11,8 +11,6 @@ export class Particle extends Actor {
   driven = false
   full = false
   team = 1
-  position = Vec2(0, 0)
-  velocity = Vec2(0, 0)
   moveDir = Vec2(0, 0)
   core: Core
 
@@ -24,8 +22,8 @@ export class Particle extends Actor {
       linearDamping: 0.05,
       fixedRotation: true
     })
-    this.core = new Core(this)
     this.label = 'particle'
+    this.core = new Core(this)
     this.body.setMassData({
       mass: 1,
       center: Vec2(0, 0),
@@ -103,23 +101,20 @@ export class Particle extends Actor {
     })
   }
 
-  updateConfiguration (): void {
-    this.position = this.body.getPosition()
-    this.velocity = clampVec(this.body.getLinearVelocity(), Particle.maxSpeed)
-  }
-
   postStep (): void {
-    if (this.removed) {
-      this.game.world.destroyBody(this.body)
-      this.game.particles.delete(this.id)
-      return
-    }
-    this.updateConfiguration()
-    if (!this.core.alive) this.respawn()
+    super.postStep()
+    this.contacts.forEach(otherActor => {
+      if (otherActor instanceof Particle) {
+        const direction = dirToFrom(this.position, otherActor.position)
+        const scale = 5
+        const force = Vec2.mul(scale, direction)
+        this.body.applyForceToCenter(force)
+      }
+    })
   }
 
   remove (): void {
-    this.game.actors.delete(this.id)
-    this.removed = true
+    super.remove()
+    this.game.particles.delete(this.id)
   }
 }

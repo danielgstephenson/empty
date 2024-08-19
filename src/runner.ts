@@ -18,7 +18,7 @@ export class Runner {
     this.game.preStep()
     this.game.particles.forEach(particle => particle.preStep())
     this.game.world.step(dt * this.game.config.timeScale)
-    this.game.particles.forEach(particle => particle.postStep())
+    this.game.actors.forEach(actor => actor.postStep())
     this.game.summary = new GameSummary(this.game)
   }
 
