@@ -20,7 +20,7 @@ export class Player {
   }
 
   remove (): void {
-    this.particle.remove()
     this.game.players.delete(this.id)
+    this.particle.remove()
   }
 }

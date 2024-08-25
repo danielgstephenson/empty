@@ -1,4 +1,4 @@
-import { Settings, Vec2, World } from 'planck'
+import { Settings, Vec2, World, Body } from 'planck'
 import { Config } from './config'
 import { getIo } from './server'
 import { Player } from './player'
@@ -64,7 +64,12 @@ export class Game {
   }
 
   preStep (): void {
-    //
+    this.getBodies().forEach(body => {
+      const actor = body.getUserData() as Actor
+      if (actor.removed) {
+        this.world.destroyBody(body)
+      }
+    })
   }
 
   getSmallPlayerTeam (): number {
@@ -80,5 +85,13 @@ export class Game {
       if (player.particle.team === team) count += 1
     })
     return count
+  }
+
+  getBodies (): Body[] {
+    const bodies: Body[] = []
+    for (let body = this.world.getBodyList(); body != null; body = body.getNext()) {
+      bodies.push(body)
+    }
+    return bodies
   }
 }

@@ -1,6 +1,7 @@
 import { Contact } from 'planck'
 import { Game } from './game'
 import { Actor } from './actors/actor'
+import { Particle } from './actors/particle'
 
 export class Collider {
   game: Game
@@ -13,38 +14,28 @@ export class Collider {
   }
 
   beginContact (contact: Contact): void {
-    const fixtureA = contact.getFixtureA()
-    const fixtureB = contact.getFixtureB()
-    const actorA = fixtureA.getBody().getUserData() as Actor
-    const actorB = fixtureB.getBody().getUserData() as Actor
-    const pairs = [
-      [actorA, actorB],
-      [actorB, actorA]
-    ]
-    pairs.forEach(pair => {
-      const actor = pair[0]
-      const otherActor = pair[1]
-      actor.contactActors.push(otherActor)
-    })
+    //
   }
 
   endContact (contact: Contact): void {
+    //
+  }
+
+  preSolve (contact: Contact): void {
+    const collide = this.shouldCollide(contact)
+    contact.setEnabled(collide)
+  }
+
+  shouldCollide (contact: Contact): boolean {
     const fixtureA = contact.getFixtureA()
     const fixtureB = contact.getFixtureB()
     const actorA = fixtureA.getBody().getUserData() as Actor
     const actorB = fixtureB.getBody().getUserData() as Actor
-    const pairs = [
-      [actorA, actorB],
-      [actorB, actorA]
-    ]
-    pairs.forEach(pair => {
-      const actor = pair[0]
-      const otherActor = pair[1]
-      actor.contactActors = actor.contactActors.filter(contactActor => contactActor.id !== otherActor.id)
-    })
-  }
-
-  preSolve (contact: Contact): void {
-    //
+    if (!(actorA instanceof Particle)) return true
+    if (!(actorB instanceof Particle)) return true
+    if (actorA.team === actorB.team) return true
+    if (actorA.driven) return false
+    if (actorB.driven) return false
+    return true
   }
 }

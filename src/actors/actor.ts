@@ -9,10 +9,9 @@ export class Actor {
   id: string
   label = 'actor'
   removed = false
-  maxSpeed = 5
+  maxSpeed = 4
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
-  contactActors: Actor[] = []
 
   constructor (game: Game, id: string, bodyDef: BodyDef) {
     if (game.actors.has(id)) {
@@ -33,11 +32,6 @@ export class Actor {
   }
 
   postStep (): void {
-    if (this.removed) {
-      this.game.world.destroyBody(this.body)
-      this.game.particles.delete(this.id)
-      return
-    }
     this.updateConfiguration()
   }
 

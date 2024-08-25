@@ -5,7 +5,7 @@ import { normalize } from '../math'
 import { Core } from '../features/core'
 
 export class Particle extends Actor {
-  static movePower = 5
+  movePower = 4
   driven = false
   full = false
   team = 1
@@ -69,28 +69,13 @@ export class Particle extends Actor {
 
   preStep (): void {
     if (this.driven) {
-      const force = Vec2.mul(normalize(this.moveDir), Particle.movePower)
+      const force = Vec2.mul(normalize(this.moveDir), this.movePower)
       this.body.applyForceToCenter(force)
     }
   }
 
   postStep (): void {
     super.postStep()
-    if (this.contactActors.length > 0) {
-      console.log('this.contactActors.length', this.contactActors.length)
-    }
-    // this.contactActors.forEach(contactActor => {
-    //   if (contactActor instanceof Particle) {
-    //     const contactPosition = contactActor.body.getPosition()
-    //     const direction = dirToFrom(this.position, contactPosition)
-    //     const force = Vec2.mul(5, direction)
-    //     this.body.applyForceToCenter(force)
-    //   }
-    //   if (contactActor instanceof Arena) {
-    //     const force = Vec2.mul(-15, normalize(this.position))
-    //     this.body.applyForceToCenter(force)
-    //   }
-    // })
   }
 
   remove (): void {
