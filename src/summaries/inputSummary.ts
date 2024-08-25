@@ -1,5 +1,5 @@
 import { Vec2 } from 'planck'
-import { normalize } from '../math'
+import { dirToFrom, normalize } from '../math'
 import { Input } from '../public/input'
 
 export class InputSummary {
@@ -8,7 +8,9 @@ export class InputSummary {
   constructor (input: Input) {
     // console.log(input.mouseButtons)
     if (input.isMouseButtonDown(0)) {
-      this.moveDir = normalize(input.mousePosition)
+      console.log('mousePosition', input.mousePosition.x, input.mousePosition.y)
+      console.log('cameraPosition', input.renderer.camera.position.x, input.renderer.camera.position.y)
+      this.moveDir = dirToFrom(input.mousePosition, input.renderer.camera.position)
     } else {
       let x = 0
       let y = 0

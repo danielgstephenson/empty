@@ -18,7 +18,7 @@ export class Boundary extends Feature {
     super(actor, {
       shape: chain,
       friction: 0,
-      restitution: 0.5
+      restitution: 1
     })
     this.label = 'wall'
   }

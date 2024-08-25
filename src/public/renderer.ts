@@ -3,6 +3,7 @@ import { PlayerSummary } from '../summaries/playerSummary'
 import { Arena } from '../actors/arena'
 import { Camera } from './camera'
 import { ParticleSummary } from '../summaries/particleSummary'
+import { Vec2 } from 'planck'
 
 export class Renderer {
   canvas: HTMLCanvasElement
@@ -28,7 +29,7 @@ export class Renderer {
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
     this.setupCanvas()
-    this.cameraFollow()
+    // this.cameraFollow()
     this.drawArena()
     this.particleSummaries.forEach(particle => {
       this.drawParticle(particle)
@@ -77,6 +78,16 @@ export class Renderer {
   setupCanvas (): void {
     this.canvas.width = window.visualViewport?.width ?? window.innerWidth
     this.canvas.height = window.visualViewport?.height ?? window.innerHeight
+  }
+
+  getPlayerPosition (): Vec2 {
+    let position = Vec2(0, 0)
+    this.particleSummaries.forEach(particle => {
+      if (particle.id === this.id) {
+        position = particle.position
+      }
+    })
+    return position
   }
 
   cameraFollow (): void {

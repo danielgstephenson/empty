@@ -16,15 +16,15 @@ export class Collider {
     const fixtureA = contact.getFixtureA()
     const fixtureB = contact.getFixtureB()
     const actorA = fixtureA.getBody().getUserData() as Actor
-    const actor = fixtureB.getBody().getUserData() as Actor
+    const actorB = fixtureB.getBody().getUserData() as Actor
     const pairs = [
-      [actorA, actor],
-      [actor, actorA]
+      [actorA, actorB],
+      [actorB, actorA]
     ]
     pairs.forEach(pair => {
-      // const actor = pair[0]
-      // const otherActor = pair[1]
-      // //actor.contacts.push(otherActor)
+      const actor = pair[0]
+      const otherActor = pair[1]
+      actor.contactActors.push(otherActor)
     })
   }
 
@@ -32,15 +32,15 @@ export class Collider {
     const fixtureA = contact.getFixtureA()
     const fixtureB = contact.getFixtureB()
     const actorA = fixtureA.getBody().getUserData() as Actor
-    const actor = fixtureB.getBody().getUserData() as Actor
+    const actorB = fixtureB.getBody().getUserData() as Actor
     const pairs = [
-      [actorA, actor],
-      [actor, actorA]
+      [actorA, actorB],
+      [actorB, actorA]
     ]
     pairs.forEach(pair => {
-      // const actor = pair[0]
-      // const otherActor = pair[1]
-      // actor.contacts = actor.contacts.filter(x => x.id !== otherActor.id)
+      const actor = pair[0]
+      const otherActor = pair[1]
+      actor.contactActors = actor.contactActors.filter(contactActor => contactActor.id !== otherActor.id)
     })
   }
 

@@ -12,7 +12,7 @@ export class Actor {
   maxSpeed = 5
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
-  contacts: Contact[] = []
+  contactActors: Actor[] = []
 
   constructor (game: Game, id: string, bodyDef: BodyDef) {
     if (game.actors.has(id)) {
@@ -28,7 +28,6 @@ export class Actor {
 
   updateConfiguration (): void {
     this.position = this.body.getPosition()
-    this.contacts = this.getContacts()
     this.velocity = clampVec(this.body.getLinearVelocity(), this.maxSpeed)
     this.body.setLinearVelocity(this.velocity)
   }

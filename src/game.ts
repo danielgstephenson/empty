@@ -1,4 +1,4 @@
-import { Vec2, World } from 'planck'
+import { Settings, Vec2, World } from 'planck'
 import { Config } from './config'
 import { getIo } from './server'
 import { Player } from './player'
@@ -27,6 +27,7 @@ export class Game {
 
   constructor () {
     console.log('Start Game')
+    Settings.velocityThreshold = 0
     this.timeScale = this.config.timeScale
     this.createParticles()
     const io = getIo(this.config)
@@ -53,7 +54,7 @@ export class Game {
 
   createParticles (): void {
     [1, 2].forEach(team => {
-      range(1, 4).forEach(i => {
+      range(1, 5).forEach(i => {
         const x = 0.5 * (2 * Math.random() - 1) * Arena.hx
         const y = 0.5 * (2 * Math.random() - 1) * Arena.hy
         const particle = new Particle(this, x, y)

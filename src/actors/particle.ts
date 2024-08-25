@@ -1,7 +1,7 @@
 import { Actor } from './actor'
 import { Game } from '../game'
 import { Vec2 } from 'planck'
-import { dirToFrom, normalize } from '../math'
+import { normalize } from '../math'
 import { Core } from '../features/core'
 
 export class Particle extends Actor {
@@ -70,27 +70,24 @@ export class Particle extends Actor {
   preStep (): void {
     if (this.driven) {
       const force = Vec2.mul(normalize(this.moveDir), Particle.movePower)
-      this.body.applyForce(force, this.body.getPosition())
+      this.body.applyForceToCenter(force)
     }
   }
 
   postStep (): void {
     super.postStep()
-    this.contacts.forEach(contact => {
-      const vec2Value = contact.getWorldManifold(null)?.points[0]
-      if (vec2Value != null) {
-        const contactPosition = Vec2(vec2Value.x, vec2Value.y)
-        const direction = dirToFrom(this.position, contactPosition)
-        const scale = 10
-        const force = Vec2.mul(scale, direction)
-        this.body.applyForceToCenter(force)
-      }
-    })
-    // this.contacts.forEach(otherActor => {
-    //   if (otherActor instanceof Particle) {
-    //     const direction = dirToFrom(this.position, otherActor.position)
-    //     const scale = 5
-    //     const force = Vec2.mul(scale, direction)
+    if (this.contactActors.length > 0) {
+      console.log('this.contactActors.length', this.contactActors.length)
+    }
+    // this.contactActors.forEach(contactActor => {
+    //   if (contactActor instanceof Particle) {
+    //     const contactPosition = contactActor.body.getPosition()
+    //     const direction = dirToFrom(this.position, contactPosition)
+    //     const force = Vec2.mul(5, direction)
+    //     this.body.applyForceToCenter(force)
+    //   }
+    //   if (contactActor instanceof Arena) {
+    //     const force = Vec2.mul(-15, normalize(this.position))
     //     this.body.applyForceToCenter(force)
     //   }
     // })
