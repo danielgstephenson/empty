@@ -1,5 +1,6 @@
-import { BodyDef, Body, Fixture, Vec2 } from 'planck'
+import { BodyDef, Body, Fixture, Vec2, Contact } from 'planck'
 import { Game } from '../game'
+import { clampVec } from '../math'
 
 export class Actor {
   static count = 0
@@ -8,9 +9,10 @@ export class Actor {
   id: string
   label = 'actor'
   removed = false
+  maxSpeed = 5
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
-  contacts: Actor[] = []
+  contacts: Contact[] = []
 
   constructor (game: Game, id: string, bodyDef: BodyDef) {
     if (game.actors.has(id)) {
@@ -24,17 +26,11 @@ export class Actor {
     }
   }
 
-  getFixtures (): Fixture[] {
-    const fixtures = []
-    for (let fixture = this.body.getFixtureList(); fixture != null; fixture = fixture.getNext()) {
-      fixtures.push(fixture)
-    }
-    return fixtures
-  }
-
   updateConfiguration (): void {
     this.position = this.body.getPosition()
-    this.velocity = this.body.getLinearVelocity()
+    this.contacts = this.getContacts()
+    this.velocity = clampVec(this.body.getLinearVelocity(), this.maxSpeed)
+    this.body.setLinearVelocity(this.velocity)
   }
 
   postStep (): void {
@@ -49,5 +45,21 @@ export class Actor {
   remove (): void {
     this.game.actors.delete(this.id)
     this.removed = true
+  }
+
+  getFixtures (): Fixture[] {
+    const fixtures = []
+    for (let fixture = this.body.getFixtureList(); fixture != null; fixture = fixture.getNext()) {
+      fixtures.push(fixture)
+    }
+    return fixtures
+  }
+
+  getContacts (): Contact[] {
+    const contacts: Contact[] = []
+    for (let contactEdge = this.body.getContactList(); contactEdge != null; contactEdge = contactEdge.next) {
+      contacts.push(contactEdge.contact)
+    }
+    return contacts
   }
 }

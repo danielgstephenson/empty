@@ -22,9 +22,9 @@ export class Collider {
       [actor, actorA]
     ]
     pairs.forEach(pair => {
-      const actor = pair[0]
-      const otherActor = pair[1]
-      actor.contacts.push(otherActor)
+      // const actor = pair[0]
+      // const otherActor = pair[1]
+      // //actor.contacts.push(otherActor)
     })
   }
 
@@ -38,9 +38,9 @@ export class Collider {
       [actor, actorA]
     ]
     pairs.forEach(pair => {
-      const actor = pair[0]
-      const otherActor = pair[1]
-      actor.contacts = actor.contacts.filter(x => x.id !== otherActor.id)
+      // const actor = pair[0]
+      // const otherActor = pair[1]
+      // actor.contacts = actor.contacts.filter(x => x.id !== otherActor.id)
     })
   }
 

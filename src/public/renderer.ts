@@ -28,7 +28,7 @@ export class Renderer {
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
     this.setupCanvas()
-    // this.cameraFollow()
+    this.cameraFollow()
     this.drawArena()
     this.particleSummaries.forEach(particle => {
       this.drawParticle(particle)
@@ -63,10 +63,12 @@ export class Renderer {
     this.context.lineWidth = 1
     this.context.fillStyle = 'black'
     this.context.beginPath()
-    this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
+    // this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
+    this.context.arc(0, 0, Arena.radius, 0, 2 * Math.PI)
     this.context.stroke()
     this.context.beginPath()
-    this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
+    // this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
+    this.context.arc(0, 0, Arena.radius, 0, 2 * Math.PI)
     this.context.fill()
     this.context.strokeStyle = 'hsl(0 0 30)'
     this.context.lineWidth = 0.2
