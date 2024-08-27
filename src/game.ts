@@ -24,12 +24,17 @@ export class Game {
   arena = new Arena(this)
 
   timeScale: number
+  spawnPositions = {
+    1: Vec2(0, 0),
+    2: Vec2(0, 0)
+  }
 
   constructor () {
     console.log('Start Game')
     Settings.velocityThreshold = 0
     this.timeScale = this.config.timeScale
     this.createParticles()
+    this.setup()
     const io = getIo(this.config)
     io.on('connection', socket => {
       console.log('connect:', socket.id)
@@ -59,6 +64,19 @@ export class Game {
         const y = 0.5 * (2 * Math.random() - 1) * Arena.hy
         const particle = new Particle(this, x, y)
         particle.team = team
+        if (i <= 3) particle.full = true
+      })
+    })
+  }
+
+  setup (): void {
+    [1, 2].forEach(team => {
+      range(1, 5).forEach(i => {
+        const x = 0.5 * (2 * Math.random() - 1) * Arena.hx
+        const y = 0.5 * (2 * Math.random() - 1) * Arena.hy
+        const particle = new Particle(this, x, y)
+        particle.team = team
+        if (i <= 3) particle.full = true
       })
     })
   }

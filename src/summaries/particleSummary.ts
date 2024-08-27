@@ -3,16 +3,16 @@ import { Particle } from '../actors/particle'
 
 export class ParticleSummary {
   position: Vec2
-  angle: number
+  full: boolean
   id: string
   team: number
-  driven: boolean
+  piloted: boolean
 
   constructor (particle: Particle) {
     this.position = particle.body.getPosition()
-    this.angle = particle.body.getAngle()
+    this.full = particle.full
     this.id = particle.id
     this.team = particle.team
-    this.driven = particle.driven
+    this.piloted = particle.piloted
   }
 }

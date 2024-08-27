@@ -3,7 +3,7 @@ import { Actor } from '../actors/actor'
 import { Feature } from './feature'
 import { range } from '../math'
 
-export class Boundary extends Feature {
+export class CircleBoundary extends Feature {
   constructor (actor: Actor, radius: number) {
     const vertices: Vec2[] = []
     const pointCount = 400

@@ -6,9 +6,9 @@ import { Core } from '../features/core'
 
 export class Particle extends Actor {
   movePower = 4
-  driven = false
+  piloted = false
   full = false
-  team = 1
+  team = 0
   moveDir = Vec2(0, 0)
   core: Core
 
@@ -68,7 +68,7 @@ export class Particle extends Actor {
   }
 
   preStep (): void {
-    if (this.driven) {
+    if (this.piloted) {
       const force = Vec2.mul(normalize(this.moveDir), this.movePower)
       this.body.applyForceToCenter(force)
     }

@@ -11,7 +11,7 @@ export class Renderer {
   camera = new Camera()
   particleSummaries: ParticleSummary[] = []
 
-  color1 = 'blue'
+  color1 = 'rgb(0,20,255)'
   color2 = 'rgb(0,120,0)'
   id = ''
 
@@ -29,7 +29,7 @@ export class Renderer {
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
     this.setupCanvas()
-    // this.cameraFollow()
+    this.cameraFollow()
     this.drawArena()
     this.particleSummaries.forEach(particle => {
       this.drawParticle(particle)
@@ -39,6 +39,7 @@ export class Renderer {
   drawParticle (particle: ParticleSummary): void {
     this.setupContext()
     this.context.save()
+    this.context.globalAlpha = 1
     this.context.fillStyle = particle.team === 1 ? this.color1 : this.color2
     this.context.strokeStyle = particle.team === 1 ? this.color1 : this.color2
     this.context.lineWidth = 0.2
@@ -50,10 +51,20 @@ export class Renderer {
     )
     this.context.closePath()
     this.context.clip()
-    if (particle.driven) {
-      this.context.fill()
+    if (particle.piloted) {
+      this.context.stroke()
+      this.context.lineWidth = 0.1
+      const diagonal = Core.radius * Math.SQRT2 / 2
+      this.context.moveTo(particle.position.x + diagonal, particle.position.y - diagonal)
+      this.context.lineTo(particle.position.x - diagonal, particle.position.y + diagonal)
+      this.context.moveTo(particle.position.x + diagonal, particle.position.y + diagonal)
+      this.context.lineTo(particle.position.x - diagonal, particle.position.y - diagonal)
+      this.context.stroke()
     } else {
       this.context.stroke()
+    }
+    if (particle.full) {
+      this.context.fill()
     }
     this.context.restore()
   }
@@ -64,12 +75,10 @@ export class Renderer {
     this.context.lineWidth = 1
     this.context.fillStyle = 'black'
     this.context.beginPath()
-    // this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
-    this.context.arc(0, 0, Arena.radius, 0, 2 * Math.PI)
+    this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
     this.context.stroke()
     this.context.beginPath()
-    // this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
-    this.context.arc(0, 0, Arena.radius, 0, 2 * Math.PI)
+    this.context.rect(-Arena.hx, -Arena.hy, 2 * Arena.hx, 2 * Arena.hy)
     this.context.fill()
     this.context.strokeStyle = 'hsl(0 0 30)'
     this.context.lineWidth = 0.2

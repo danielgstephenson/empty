@@ -10,7 +10,7 @@ export class Player {
     this.game = game
     this.id = id
     this.particle = new Particle(game, 0, 0, id)
-    this.particle.driven = true
+    this.particle.piloted = true
     this.game.players.set(id, this)
     this.joinTeam()
   }
