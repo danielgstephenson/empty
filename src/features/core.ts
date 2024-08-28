@@ -3,7 +3,7 @@ import { Particle } from '../actors/particle'
 import { Feature } from './feature'
 
 export class Core extends Feature {
-  static radius = 0.5
+  static radius = 0.7
   particle: Particle
   alive = true
 

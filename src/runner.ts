@@ -21,10 +21,4 @@ export class Runner {
     this.game.actors.forEach(actor => actor.postStep())
     this.game.summary = new GameSummary(this.game)
   }
-
-  restart (): void {
-    this.game.particles.forEach(particle => { particle.team = 0 })
-    this.game.players.forEach(player => player.joinTeam())
-    this.game.particles.forEach(particle => particle.respawn())
-  }
 }

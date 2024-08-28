@@ -7,10 +7,12 @@ import { GameSummary } from './summaries/gameSummary'
 import { Actor } from './actors/actor'
 import { Particle } from './actors/particle'
 import { PlayerSummary } from './summaries/playerSummary'
-import { choose, range } from './math'
+import { choose, range, shuffle } from './math'
 import { Runner } from './runner'
 import { Arena } from './actors/arena'
 import { Collider } from './collider'
+
+export type Team = 1 | 2
 
 export class Game {
   world = new World()
@@ -24,7 +26,7 @@ export class Game {
   arena = new Arena(this)
 
   timeScale: number
-  spawnPositions = {
+  spawnPoints = {
     1: Vec2(0, 0),
     2: Vec2(0, 0)
   }
@@ -39,7 +41,7 @@ export class Game {
     io.on('connection', socket => {
       console.log('connect:', socket.id)
       socket.emit('connected')
-      const player = new Player(this, socket.id)
+      const player = new Player(this, socket.id, this.getSmallPlayerTeam())
       socket.on('input', (input: InputSummary) => {
         const moveDir = input.moveDir ?? Vec2(0, 0)
         player.particle.moveDir.x = moveDir.x ?? 0
@@ -58,26 +60,43 @@ export class Game {
   }
 
   createParticles (): void {
-    [1, 2].forEach(team => {
+    const teams: Team[] = [1, 2]
+    teams.forEach(team => {
       range(1, 5).forEach(i => {
-        const x = 0.5 * (2 * Math.random() - 1) * Arena.hx
-        const y = 0.5 * (2 * Math.random() - 1) * Arena.hy
-        const particle = new Particle(this, x, y)
-        particle.team = team
+        const particle = new Particle(this, team, 0, 0)
         if (i <= 3) particle.full = true
       })
     })
   }
 
   setup (): void {
-    [1, 2].forEach(team => {
-      range(1, 5).forEach(i => {
-        const x = 0.5 * (2 * Math.random() - 1) * Arena.hx
-        const y = 0.5 * (2 * Math.random() - 1) * Arena.hy
-        const particle = new Particle(this, x, y)
-        particle.team = team
-        if (i <= 3) particle.full = true
-      })
+    const particles = [...this.particles.values()]
+    const pilotedParticles = particles.filter(particle => particle.piloted)
+    const spin1 = 2 * Math.PI * Math.random()
+    const spin2 = spin1 + Math.PI
+    const spread = 3 + 10 * Math.random()
+    this.spawnPoints[1] = Vec2(spread * Math.cos(spin1), spread * Math.sin(spin1))
+    this.spawnPoints[2] = Vec2(spread * Math.cos(spin2), spread * Math.sin(spin2))
+    pilotedParticles.forEach(particle => {
+      particle.body.setPosition(this.spawnPoints[particle.team])
+    })
+    const passiveParticles = particles.filter(particle => !particle.piloted)
+    const particles1 = passiveParticles.filter(particle => particle.team === 1)
+    const particles2 = passiveParticles.filter(particle => particle.team === 2)
+    const fills = shuffle([true, true, true, false, false])
+    console.log('particles1.length', particles1.length)
+    console.log('particles2.length', particles2.length)
+    range(0, 4).forEach(i => {
+      const flip = Math.random() < 0.5
+      const start1 = flip ? spin2 : spin1
+      const start2 = flip ? spin1 : spin2
+      const angle1 = start1 + Math.PI * (i + 1) / 6
+      const angle2 = start2 + Math.PI * (i + 1) / 6
+      const spread = 3 + 10 * Math.random()
+      particles1[i].full = fills[i]
+      particles2[i].full = fills[i]
+      particles1[i].body.setPosition(Vec2(spread * Math.cos(angle1), spread * Math.sin(angle1)))
+      particles2[i].body.setPosition(Vec2(spread * Math.cos(angle2), spread * Math.sin(angle2)))
     })
   }
 
@@ -90,7 +109,7 @@ export class Game {
     })
   }
 
-  getSmallPlayerTeam (): number {
+  getSmallPlayerTeam (): 1 | 2 {
     const count1 = this.getTeamPlayerCount(1)
     const count2 = this.getTeamPlayerCount(2)
     if (count1 === count2) return choose([1, 2])

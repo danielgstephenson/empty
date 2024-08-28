@@ -9,7 +9,7 @@ export class Actor {
   id: string
   label = 'actor'
   removed = false
-  maxSpeed = 4
+  maxSpeed = 3
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
 

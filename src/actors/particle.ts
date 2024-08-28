@@ -1,5 +1,5 @@
 import { Actor } from './actor'
-import { Game } from '../game'
+import { Game, Team } from '../game'
 import { Vec2 } from 'planck'
 import { normalize } from '../math'
 import { Core } from '../features/core'
@@ -8,11 +8,11 @@ export class Particle extends Actor {
   movePower = 4
   piloted = false
   full = false
-  team = 0
+  team: Team
   moveDir = Vec2(0, 0)
   core: Core
 
-  constructor (game: Game, x: number, y: number, id?: string) {
+  constructor (game: Game, team: 1 | 2, x: number, y: number, id?: string) {
     id = id ?? String(game.particles.size + 1)
     super(game, id, {
       type: 'dynamic',
@@ -21,6 +21,7 @@ export class Particle extends Actor {
       fixedRotation: true
     })
     this.label = 'particle'
+    this.team = team
     this.core = new Core(this)
     this.body.setMassData({
       mass: 1,
@@ -28,26 +29,8 @@ export class Particle extends Actor {
       I: 0.25
     })
     this.body.setPosition(Vec2(x, y))
-    this.game.particles.set(this.id, this)
-  }
-
-  joinTeam (team: number): void {
-    this.team = team
-    this.respawn()
-  }
-
-  respawn (): void {
-    const spawnPoint = this.getSpawnPoint()
-    this.body.setPosition(spawnPoint)
-    this.body.setLinearVelocity(Vec2(0, 0))
-    this.body.setAngle(0)
-    this.body.setAngularVelocity(0)
-    this.core.alive = true
     this.updateConfiguration()
-  }
-
-  getSpawnPoint (): Vec2 {
-    return Vec2(0, 0)
+    this.game.particles.set(this.id, this)
   }
 
   getAllies (): Particle[] {
