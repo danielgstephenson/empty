@@ -1,15 +1,17 @@
-import { Core } from '../features/core'
 import { PlayerSummary } from '../summaries/playerSummary'
 import { Arena } from '../actors/arena'
 import { Camera } from './camera'
 import { ParticleSummary } from '../summaries/particleSummary'
-import { Vec2 } from 'planck'
+import { GuideSummary } from '../summaries/guideSummary'
+import { Particle } from '../actors/particle'
+import { Guide } from '../actors/guide'
 
 export class Renderer {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   camera = new Camera()
-  particleSummaries: ParticleSummary[] = []
+  particles: ParticleSummary[] = []
+  guides: GuideSummary[] = []
 
   color1 = 'rgb(0,20,255)'
   color2 = 'rgb(0,120,0)'
@@ -22,17 +24,21 @@ export class Renderer {
   }
 
   readSummary (summary: PlayerSummary): void {
-    this.particleSummaries = summary.game.particles
+    this.particles = summary.game.particles
+    this.guides = summary.game.guides
     this.id = summary.id
   }
 
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
     this.setupCanvas()
-    this.cameraFollow()
+    // this.cameraFollow()
     this.drawArena()
-    this.particleSummaries.forEach(particle => {
+    this.particles.forEach(particle => {
       this.drawParticle(particle)
+    })
+    this.guides.forEach(guide => {
+      this.drawGuide(guide)
     })
   }
 
@@ -47,25 +53,41 @@ export class Renderer {
     this.context.arc(
       particle.position.x,
       particle.position.y,
-      Core.radius, 0, 2 * Math.PI
+      Particle.radius, 0, 2 * Math.PI
     )
     this.context.closePath()
     this.context.clip()
-    if (particle.piloted) {
-      this.context.stroke()
-      this.context.lineWidth = 0.1
-      const diagonal = Core.radius * Math.SQRT2 / 2
-      this.context.moveTo(particle.position.x + diagonal, particle.position.y - diagonal)
-      this.context.lineTo(particle.position.x - diagonal, particle.position.y + diagonal)
-      this.context.moveTo(particle.position.x + diagonal, particle.position.y + diagonal)
-      this.context.lineTo(particle.position.x - diagonal, particle.position.y - diagonal)
-      this.context.stroke()
+    if (particle.full) {
+      this.context.fill()
     } else {
       this.context.stroke()
     }
-    if (particle.full) {
-      this.context.fill()
-    }
+    this.context.restore()
+  }
+
+  drawGuide (guide: GuideSummary): void {
+    this.setupContext()
+    this.context.save()
+    this.context.globalAlpha = 0.5
+    this.context.fillStyle = guide.team === 1 ? this.color1 : this.color2
+    this.context.strokeStyle = guide.team === 1 ? this.color1 : this.color2
+    this.context.lineWidth = 0.2
+    this.context.beginPath()
+    this.context.arc(
+      guide.position.x,
+      guide.position.y,
+      Guide.radius, 0, 2 * Math.PI
+    )
+    this.context.closePath()
+    this.context.clip()
+    this.context.stroke()
+    this.context.lineWidth = 0.2
+    const diagonal = Guide.radius * Math.SQRT2 / 2
+    this.context.moveTo(guide.position.x + diagonal, guide.position.y - diagonal)
+    this.context.lineTo(guide.position.x - diagonal, guide.position.y + diagonal)
+    this.context.moveTo(guide.position.x + diagonal, guide.position.y + diagonal)
+    this.context.lineTo(guide.position.x - diagonal, guide.position.y - diagonal)
+    this.context.stroke()
     this.context.restore()
   }
 
@@ -89,20 +111,10 @@ export class Renderer {
     this.canvas.height = window.visualViewport?.height ?? window.innerHeight
   }
 
-  getPlayerPosition (): Vec2 {
-    let position = Vec2(0, 0)
-    this.particleSummaries.forEach(particle => {
-      if (particle.id === this.id) {
-        position = particle.position
-      }
-    })
-    return position
-  }
-
   cameraFollow (): void {
-    this.particleSummaries.forEach(particle => {
-      if (particle.id === this.id) {
-        this.camera.position = particle.position
+    this.guides.forEach(guide => {
+      if (guide.id === this.id) {
+        this.camera.position = guide.position
       }
     })
   }

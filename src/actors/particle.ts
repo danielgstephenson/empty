@@ -1,25 +1,25 @@
 import { Actor } from './actor'
 import { Game, Team } from '../game'
 import { Vec2 } from 'planck'
-import { normalize } from '../math'
 import { Core } from '../features/core'
 
 export class Particle extends Actor {
-  movePower = 4
-  piloted = false
+  static radius = 0.7
   full = false
   team: Team
   moveDir = Vec2(0, 0)
+  id: string
   core: Core
 
-  constructor (game: Game, team: 1 | 2, x: number, y: number, id?: string) {
-    id = id ?? String(game.particles.size + 1)
+  constructor (game: Game, team: 1 | 2, x: number, y: number) {
+    const id = String(game.particles.size + 1)
     super(game, id, {
       type: 'dynamic',
       bullet: true,
       linearDamping: 0,
       fixedRotation: true
     })
+    this.id = id
     this.label = 'particle'
     this.team = team
     this.core = new Core(this)
@@ -33,28 +33,10 @@ export class Particle extends Actor {
     this.game.particles.set(this.id, this)
   }
 
-  getAllies (): Particle[] {
-    const particles = [...this.game.particles.values()]
-    return particles.filter(particle => particle.team === this.team && particle.id !== this.id)
-  }
-
-  getEnemies (): Particle[] {
-    const particles = [...this.game.particles.values()]
-    return particles.filter(particle => particle.team !== this.team)
-  }
-
-  getAllyDistance (position: Vec2): number {
-    const allyDistances = this.getAllies().map(ally => {
-      return Vec2.distance(ally.position, position)
-    })
-    return Math.min(...allyDistances)
-  }
-
   preStep (): void {
-    if (this.piloted) {
-      const force = Vec2.mul(normalize(this.moveDir), this.movePower)
-      this.body.applyForceToCenter(force)
-    }
+    // const centerPower = 0.1
+    // const centerForce = Vec2.mul(-centerPower, this.position)
+    // this.body.applyForceToCenter(centerForce)
   }
 
   postStep (): void {

@@ -17,6 +17,7 @@ export class Runner {
     const dt = this.game.timeScale * (this.time - oldTime) / 1000
     this.game.preStep()
     this.game.particles.forEach(particle => particle.preStep())
+    this.game.guides.forEach(guide => guide.preStep())
     this.game.world.step(dt * this.game.config.timeScale)
     this.game.actors.forEach(actor => actor.postStep())
     this.game.summary = new GameSummary(this.game)

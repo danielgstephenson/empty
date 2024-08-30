@@ -1,20 +1,22 @@
 import { Circle, Vec2 } from 'planck'
 import { Particle } from '../actors/particle'
 import { Feature } from './feature'
+import { Guide } from '../actors/guide'
 
 export class Core extends Feature {
-  static radius = 0.7
-  particle: Particle
-  alive = true
+  radius: number
+  actor: Particle | Guide
 
-  constructor (particle: Particle) {
-    super(particle, {
-      shape: new Circle(Vec2(0, 0), Core.radius),
+  constructor (actor: Particle | Guide) {
+    const radius = actor instanceof Particle ? Particle.radius : Guide.radius
+    super(actor, {
+      shape: new Circle(Vec2(0, 0), radius),
       density: 1,
       friction: 0,
       restitution: 1
     })
-    this.particle = particle
+    this.radius = radius
+    this.actor = actor
     this.label = 'core'
   }
 }

@@ -22,3 +22,8 @@ function updateServer (): void {
   inputSummary = new InputSummary(input)
   socket.emit('input', inputSummary)
 }
+
+document.onmousedown = (mouseEvent: MouseEvent) => {
+  console.log(renderer.guides.map(guide => guide.id))
+  console.log(renderer.id)
+}

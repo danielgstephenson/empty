@@ -6,13 +6,11 @@ export class ParticleSummary {
   full: boolean
   id: string
   team: number
-  piloted: boolean
 
   constructor (particle: Particle) {
     this.position = particle.body.getPosition()
     this.full = particle.full
     this.id = particle.id
     this.team = particle.team
-    this.piloted = particle.piloted
   }
 }

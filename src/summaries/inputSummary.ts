@@ -8,8 +8,8 @@ export class InputSummary {
   constructor (input: Input) {
     // console.log(input.mouseButtons)
     if (input.isMouseButtonDown(0)) {
-      console.log('mousePosition', input.mousePosition.x, input.mousePosition.y)
-      console.log('cameraPosition', input.renderer.camera.position.x, input.renderer.camera.position.y)
+      // console.log('mousePosition', input.mousePosition.x, input.mousePosition.y)
+      // console.log('cameraPosition', input.renderer.camera.position.x, input.renderer.camera.position.y)
       this.moveDir = dirToFrom(input.mousePosition, input.renderer.camera.position)
     } else {
       let x = 0

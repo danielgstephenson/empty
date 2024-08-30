@@ -2,7 +2,6 @@ import { Contact } from 'planck'
 import { Game } from './game'
 import { Actor } from './actors/actor'
 import { Particle } from './actors/particle'
-
 export class Collider {
   game: Game
 
@@ -14,16 +13,19 @@ export class Collider {
   }
 
   preSolve (contact: Contact): void {
-    const fixtureA = contact.getFixtureA()
-    const fixtureB = contact.getFixtureB()
-    const actorA = fixtureA.getBody().getUserData() as Actor
-    const actorB = fixtureB.getBody().getUserData() as Actor
-    if (!(actorA instanceof Particle)) return
-    if (!(actorB instanceof Particle)) return
-    const sameTeam = actorA.team === actorB.team
-    const neitherPiloted = !actorA.piloted && !actorB.piloted
-    const shouldCollide = sameTeam || neitherPiloted
-    contact.setEnabled(shouldCollide)
+    // const fixtureA = contact.getFixtureA()
+    // const fixtureB = contact.getFixtureB()
+    // const actorA = fixtureA.getBody().getUserData() as Actor
+    // const actorB = fixtureB.getBody().getUserData() as Actor
+    // const mobileA = actorA instanceof Particle || actorA instanceof Guide
+    // const mobileB = actorB instanceof Particle || actorB instanceof Guide
+    // if (mobileA && actorB instanceof Guide) {
+    //   contact.setEnabled(false)
+    //   return
+    // }
+    // if (mobileB && actorA instanceof Guide) {
+    //   contact.setEnabled(false)
+    // }
   }
 
   beginContact (contact: Contact): void {
@@ -33,9 +35,8 @@ export class Collider {
     const actorB = fixtureB.getBody().getUserData() as Actor
     if (!(actorA instanceof Particle)) return
     if (!(actorB instanceof Particle)) return
-    const neitherPiloted = !actorA.piloted && !actorB.piloted
-    const shouldTransfer = neitherPiloted && (actorA.full !== actorB.full)
-    if (shouldTransfer) {
+    const transfer = actorA.full !== actorB.full
+    if (transfer) {
       actorA.full = !actorA.full
       actorB.full = !actorB.full
     }
