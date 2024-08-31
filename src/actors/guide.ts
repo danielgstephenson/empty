@@ -2,7 +2,7 @@ import { Actor } from './actor'
 import { Game, Team } from '../game'
 import { Vec2 } from 'planck'
 import { Core } from '../features/core'
-import { normalize } from '../math'
+import { dirToFrom, normalize } from '../math'
 
 export class Guide extends Actor {
   static radius = 1
@@ -11,6 +11,7 @@ export class Guide extends Actor {
   moveDir = Vec2(0, 0)
   core: Core
   id: string
+  pullPositions: Vec2[] = []
 
   constructor (game: Game, team: 1 | 2, x: number, y: number, id: string) {
     super(game, id, {
@@ -36,15 +37,20 @@ export class Guide extends Actor {
   preStep (): void {
     const force = Vec2.mul(normalize(this.moveDir), this.movePower)
     this.body.applyForceToCenter(force)
-    // const particles = [...this.game.particles.values()]
-    // const teamParticles = particles.filter(particle => particle.team === this.team)
-    // teamParticles.forEach(particle => {
-    //   const direction = dirToFrom(particle.position, this.position)
-    //   const distance = Vec2.distance(particle.position, this.position)
-    //   const scale = 10 / (distance + 1)
-    //   const force = Vec2.mul(scale, direction)
-    //   particle.body.applyForceToCenter(force)
-    // })
+    const particles = [...this.game.particles.values()]
+    const teamParticles = particles.filter(particle => particle.team === this.team)
+    const fullTeamParticles = teamParticles.filter(particle => particle.full)
+    const distances = fullTeamParticles.map(particle => Vec2.distance(this.position, particle.position))
+    const minDistance = Math.min(...distances)
+    this.pullPositions = []
+    fullTeamParticles.forEach((particle, i) => {
+      if (distances[i] === minDistance) {
+        this.pullPositions.push(particle.position)
+        const direction = dirToFrom(this.position, particle.position)
+        const force = Vec2.mul(1, direction)
+        particle.body.applyForceToCenter(force)
+      }
+    })
   }
 
   postStep (): void {

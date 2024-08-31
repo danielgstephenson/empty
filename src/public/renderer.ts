@@ -68,7 +68,7 @@ export class Renderer {
   drawGuide (guide: GuideSummary): void {
     this.setupContext()
     this.context.save()
-    this.context.globalAlpha = 0.5
+    this.context.globalAlpha = 1
     this.context.fillStyle = guide.team === 1 ? this.color1 : this.color2
     this.context.strokeStyle = guide.team === 1 ? this.color1 : this.color2
     this.context.lineWidth = 0.2
@@ -79,6 +79,7 @@ export class Renderer {
       Guide.radius, 0, 2 * Math.PI
     )
     this.context.closePath()
+    this.context.stroke()
     this.context.clip()
     this.context.stroke()
     this.context.lineWidth = 0.2
@@ -89,6 +90,12 @@ export class Renderer {
     this.context.lineTo(guide.position.x - diagonal, guide.position.y - diagonal)
     this.context.stroke()
     this.context.restore()
+    this.context.globalAlpha = 0.5
+    guide.pullPositions.forEach(pullPosition => {
+      this.context.moveTo(guide.position.x, guide.position.y)
+      this.context.lineTo(pullPosition.x, pullPosition.y)
+    })
+    this.context.stroke()
   }
 
   drawArena (): void {

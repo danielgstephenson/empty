@@ -5,6 +5,7 @@ import { Core } from '../features/core'
 
 export class Particle extends Actor {
   static radius = 0.7
+  maxSpeed = 100
   full = false
   team: Team
   moveDir = Vec2(0, 0)

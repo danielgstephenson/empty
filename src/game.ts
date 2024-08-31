@@ -26,6 +26,7 @@ export class Game {
   collider = new Collider(this)
   summary = new GameSummary(this)
   arena = new Arena(this)
+  particleCount = 5
 
   timeScale: number
   spawnPoints = {
@@ -64,9 +65,9 @@ export class Game {
   createParticles (): void {
     const teams: Team[] = [1, 2]
     teams.forEach(team => {
-      range(1, 5).forEach(i => {
+      range(1, this.particleCount).forEach(i => {
         const particle = new Particle(this, team, 0, 0)
-        if (i <= 3) particle.full = true
+        if (i % 2 === 0) particle.full = true
       })
     })
   }
@@ -84,10 +85,10 @@ export class Game {
     })
     const particles1 = particles.filter(particle => particle.team === 1)
     const particles2 = particles.filter(particle => particle.team === 2)
-    const fills = shuffle([true, true, true, false, false])
+    const fills = shuffle(range(1, this.particleCount).map(i => i % 2 === 0))
     console.log('particles1.length', particles1.length)
     console.log('particles2.length', particles2.length)
-    range(0, 4).forEach(i => {
+    range(0, this.particleCount - 1).forEach(i => {
       const flip = Math.random() < 0.5
       const start1 = flip ? spin2 : spin1
       const start2 = flip ? spin1 : spin2
