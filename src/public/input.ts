@@ -35,7 +35,7 @@ export class Input {
 
   onwheel (event: WheelEvent): void {
     this.renderer.camera.adjustZoom(-0.01 * event.deltaY)
-    console.log('zoom', this.renderer.camera.zoom)
+    // console.log('zoom', this.renderer.camera.zoom)
   }
 
   onmousemove (event: MouseEvent): void {

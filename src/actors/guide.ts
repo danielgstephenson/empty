@@ -6,6 +6,7 @@ import { dirToFrom, normalize } from '../math'
 
 export class Guide extends Actor {
   static radius = 1
+  maxSpeed = 2
   movePower = 2
   team: Team
   moveDir = Vec2(0, 0)
@@ -44,10 +45,11 @@ export class Guide extends Actor {
     const minDistance = Math.min(...distances)
     this.pullPositions = []
     fullTeamParticles.forEach((particle, i) => {
-      if (distances[i] === minDistance) {
+      const distance = distances[i]
+      if (distance === minDistance) {
         this.pullPositions.push(particle.position)
         const direction = dirToFrom(this.position, particle.position)
-        const force = Vec2.mul(1, direction)
+        const force = Vec2.mul(0.2 * distance, direction)
         particle.body.applyForceToCenter(force)
       }
     })

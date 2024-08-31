@@ -24,6 +24,5 @@ function updateServer (): void {
 }
 
 document.onmousedown = (mouseEvent: MouseEvent) => {
-  console.log(renderer.guides.map(guide => guide.id))
-  console.log(renderer.id)
+  //
 }
