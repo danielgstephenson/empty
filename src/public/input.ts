@@ -39,18 +39,17 @@ export class Input {
   }
 
   onmousemove (event: MouseEvent): void {
-    this.mousePosition.x = event.clientX - 0.5 * window.innerWidth
-    this.mousePosition.y = 0.5 * window.innerHeight - event.clientY
+    this.updateMousePosition(event)
   }
 
   onmousedown (event: MouseEvent): void {
     this.mouseButtons.set(event.button, true)
-    this.mousePosition.x = event.clientX - 0.5 * window.innerWidth
-    this.mousePosition.y = 0.5 * window.innerHeight - event.clientY
+    this.updateMousePosition(event)
   }
 
   onmouseup (event: MouseEvent): void {
     this.mouseButtons.set(event.button, false)
+    this.updateMousePosition(event)
   }
 
   ontouchmove (event: TouchEvent): void {
@@ -70,5 +69,16 @@ export class Input {
 
   isMouseButtonDown (button: number): boolean {
     return this.mouseButtons.get(button) ?? false
+  }
+
+  updateMousePosition (event: MouseEvent): void {
+    const screenX = event.clientX - 0.5 * window.innerWidth
+    const screenY = 0.5 * window.innerHeight - event.clientY
+    const transform = this.renderer.context.getTransform()
+    const scale = Vec2(1 / transform.a, -1 / transform.d)
+    const x = scale.x * screenX
+    const y = scale.y * screenY
+    this.mousePosition = Vec2(x, y)
+    this.renderer.mousePosition = Vec2(x, y)
   }
 }

@@ -18,6 +18,9 @@ export class Collider {
     const fixtureB = contact.getFixtureB()
     const actorA = fixtureA.getBody().getUserData() as Actor
     const actorB = fixtureB.getBody().getUserData() as Actor
+    if (actorA instanceof Guide || actorB instanceof Guide) {
+      contact.setRestitution(0)
+    }
     const mobileA = actorA instanceof Particle || actorA instanceof Guide
     const mobileB = actorB instanceof Particle || actorB instanceof Guide
     if (mobileA && actorB instanceof Guide) {

@@ -7,7 +7,7 @@ import { dirToFrom, normalize } from '../math'
 export class Guide extends Actor {
   static radius = 1
   maxSpeed = 2
-  movePower = 2
+  movePower = 10
   team: Team
   moveDir = Vec2(0, 0)
   core: Core

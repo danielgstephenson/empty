@@ -20,6 +20,7 @@ export class Runner {
     this.game.guides.forEach(guide => guide.preStep())
     this.game.world.step(dt * this.game.config.timeScale)
     this.game.actors.forEach(actor => actor.postStep())
+    this.game.checkVictory()
     this.game.summary = new GameSummary(this.game)
   }
 }

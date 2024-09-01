@@ -7,7 +7,7 @@ import { GameSummary } from './summaries/gameSummary'
 import { Actor } from './actors/actor'
 import { Particle } from './actors/particle'
 import { PlayerSummary } from './summaries/playerSummary'
-import { choose, range, shuffle } from './math'
+import { angleToDir, choose, range, shuffle } from './math'
 import { Runner } from './runner'
 import { Arena } from './actors/arena'
 import { Collider } from './collider'
@@ -27,11 +27,16 @@ export class Game {
   summary = new GameSummary(this)
   arena = new Arena(this)
   particleCount = 5
-
   timeScale: number
+
   spawnPoints = {
     1: Vec2(0, 0),
     2: Vec2(0, 0)
+  }
+
+  scores = {
+    1: 0,
+    2: 0
   }
 
   constructor () {
@@ -82,12 +87,11 @@ export class Game {
     this.spawnPoints[2] = Vec2(spread * Math.cos(spin2), spread * Math.sin(spin2))
     guides.forEach(guide => {
       guide.body.setPosition(this.spawnPoints[guide.team])
+      guide.body.setLinearVelocity(Vec2(0, 0))
     })
     const particles1 = particles.filter(particle => particle.team === 1)
     const particles2 = particles.filter(particle => particle.team === 2)
     const fills = shuffle(range(1, this.particleCount).map(i => i % 2 === 0))
-    console.log('particles1.length', particles1.length)
-    console.log('particles2.length', particles2.length)
     range(0, this.particleCount - 1).forEach(i => {
       const flip = Math.random() < 0.5
       const start1 = flip ? spin2 : spin1
@@ -97,9 +101,30 @@ export class Game {
       const spread = 3 + 10 * Math.random()
       particles1[i].full = fills[i]
       particles2[i].full = fills[i]
-      particles1[i].body.setPosition(Vec2(spread * Math.cos(angle1), spread * Math.sin(angle1)))
-      particles2[i].body.setPosition(Vec2(spread * Math.cos(angle2), spread * Math.sin(angle2)))
+      particles1[i].body.setPosition(Vec2.mul(spread, angleToDir(angle1)))
+      particles2[i].body.setPosition(Vec2.mul(spread, angleToDir(angle2)))
+      const moveAngle = 2 * Math.PI * Math.random()
+      const speed = 2
+      particles1[i].body.setLinearVelocity(Vec2.mul(speed, angleToDir(angle1 + moveAngle)))
+      particles2[i].body.setLinearVelocity(Vec2.mul(speed, angleToDir(angle2 + moveAngle)))
     })
+  }
+
+  checkVictory (): void {
+    const particles = [...this.particles.values()]
+    const emptyParticles = particles.filter(particle => !particle.full)
+    const emptyParticles1 = emptyParticles.filter(particle => particle.team === 1)
+    const emptyParticles2 = emptyParticles.filter(particle => particle.team === 2)
+    const emptyCount1 = emptyParticles1.length
+    const emptyCount2 = emptyParticles2.length
+    if (emptyCount1 === this.particleCount) {
+      this.scores[1] += 1
+      this.reset()
+    }
+    if (emptyCount2 === this.particleCount) {
+      this.scores[2] += 1
+      this.reset()
+    }
   }
 
   preStep (): void {

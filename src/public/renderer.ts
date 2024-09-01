@@ -5,6 +5,7 @@ import { ParticleSummary } from '../summaries/particleSummary'
 import { GuideSummary } from '../summaries/guideSummary'
 import { Particle } from '../actors/particle'
 import { Guide } from '../actors/guide'
+import { Vec2 } from 'planck'
 
 export class Renderer {
   canvas: HTMLCanvasElement
@@ -12,6 +13,8 @@ export class Renderer {
   camera = new Camera()
   particles: ParticleSummary[] = []
   guides: GuideSummary[] = []
+  mousePosition = Vec2(0, 0)
+  selfPosition = Vec2(0, 0)
 
   color1 = 'rgb(0,20,255)'
   color2 = 'rgb(0,120,0)'
@@ -32,11 +35,24 @@ export class Renderer {
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
     this.setupCanvas()
-    // this.cameraFollow()
     this.drawArena()
     this.guides.forEach(guide => this.drawPull(guide))
     this.particles.forEach(particle => this.drawParticle(particle))
     this.guides.forEach(guide => this.drawGuide(guide))
+  }
+
+  drawMouse (): void {
+    this.setupContext()
+    this.context.save()
+    this.context.globalAlpha = 0.2
+    this.context.fillStyle = 'red'
+    this.context.lineWidth = 0.2
+    this.context.beginPath()
+    this.context.arc(this.mousePosition.x, this.mousePosition.y, 0.5, 0, 2 * Math.PI)
+    this.context.closePath()
+    this.context.clip()
+    this.context.fill()
+    this.context.restore()
   }
 
   drawParticle (particle: ParticleSummary): void {
@@ -68,6 +84,7 @@ export class Renderer {
     this.context.fillStyle = 'white'
     this.context.strokeStyle = 'white'
     this.context.lineWidth = 0.2
+    this.context.lineCap = 'round'
     guide.pullPositions.forEach(pullPosition => {
       this.context.beginPath()
       this.context.moveTo(guide.position.x, guide.position.y)
@@ -94,11 +111,14 @@ export class Renderer {
     this.context.clip()
     this.context.stroke()
     this.context.lineWidth = 0.2
-    const diagonal = Guide.radius * Math.SQRT2 / 2
-    this.context.moveTo(guide.position.x + diagonal, guide.position.y - diagonal)
-    this.context.lineTo(guide.position.x - diagonal, guide.position.y + diagonal)
-    this.context.moveTo(guide.position.x + diagonal, guide.position.y + diagonal)
-    this.context.lineTo(guide.position.x - diagonal, guide.position.y - diagonal)
+    if (guide.id === this.id) {
+      this.selfPosition = guide.position
+      const diagonal = Guide.radius * Math.SQRT2 / 2
+      this.context.moveTo(guide.position.x + diagonal, guide.position.y - diagonal)
+      this.context.lineTo(guide.position.x - diagonal, guide.position.y + diagonal)
+      this.context.moveTo(guide.position.x + diagonal, guide.position.y + diagonal)
+      this.context.lineTo(guide.position.x - diagonal, guide.position.y - diagonal)
+    }
     this.context.closePath()
     this.context.stroke()
     this.context.restore()

@@ -17,11 +17,11 @@ body {
 #hudCenter {
   width: 80vw;
 }
-#hudLeft {
+#scoreDiv1 {
   color: rgb(0,20,255);
   font: 10vmin sans-serif;
 }
-#hudRight {
+#scoreDiv2 {
   color: rgb(0,120,0);
   font: 10vmin sans-serif;
 }

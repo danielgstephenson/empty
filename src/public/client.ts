@@ -4,6 +4,9 @@ import { Renderer } from './renderer'
 import { Input } from './input'
 import { InputSummary } from '../summaries/inputSummary'
 
+const scoreDiv1: HTMLDivElement = document.getElementById('scoreDiv1') as HTMLDivElement
+const scoreDiv2: HTMLDivElement = document.getElementById('scoreDiv2') as HTMLDivElement
+
 const socket = io()
 const renderer = new Renderer()
 const input = new Input(renderer)
@@ -16,6 +19,8 @@ socket.on('connected', () => {
 })
 socket.on('summary', (summary: PlayerSummary) => {
   renderer.readSummary(summary)
+  scoreDiv1.innerHTML = String(summary.game.scores[1])
+  scoreDiv2.innerHTML = String(summary.game.scores[2])
 })
 
 function updateServer (): void {
