@@ -16,7 +16,7 @@ export class Player {
 
   join (): void {
     this.joined = true
-    this.team = this.game.getSmallPlayerTeam()
+    this.team = this.game.getSmallGuideTeam()
     const spawnPoint = this.game.spawnPoints[this.team]
     this.guide = new Guide(this.game, this.team, spawnPoint.x, spawnPoint.y, this.id)
   }

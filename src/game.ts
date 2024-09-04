@@ -49,7 +49,7 @@ export class Game {
     io.on('connection', socket => {
       socket.emit('connected')
       console.log('connect:', socket.id)
-      const player = new Player(this, socket.id, this.getSmallPlayerTeam())
+      const player = new Player(this, socket.id, this.getSmallGuideTeam())
       socket.on('input', (input: InputSummary) => {
         const moveDir = input.moveDir ?? Vec2(0, 0)
         if (player.guide != null) {
@@ -141,14 +141,14 @@ export class Game {
     })
   }
 
-  getSmallPlayerTeam (): Team {
-    const count1 = this.getTeamPlayerCount(1)
-    const count2 = this.getTeamPlayerCount(2)
+  getSmallGuideTeam (): Team {
+    const count1 = this.getTeamGuideCount(1)
+    const count2 = this.getTeamGuideCount(2)
     if (count1 === count2) return choose([1, 2])
     return count2 > count1 ? 1 : 2
   }
 
-  getTeamPlayerCount (team: number): number {
+  getTeamGuideCount (team: number): number {
     let count = 0
     this.guides.forEach(guide => {
       if (guide.team === team) count += 1
