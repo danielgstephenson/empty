@@ -15,7 +15,8 @@ export class Actor {
 
   constructor (game: Game, id: string, bodyDef: BodyDef) {
     if (game.actors.has(id)) {
-      throw new Error(`Actor id ${id} is already in use.`)
+      const message = `Actor id ${id} is already in use.`
+      throw new Error(message)
     } else {
       this.game = game
       this.id = id

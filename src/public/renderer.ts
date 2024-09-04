@@ -15,6 +15,7 @@ export class Renderer {
   guides: GuideSummary[] = []
   mousePosition = Vec2(0, 0)
   selfPosition = Vec2(0, 0)
+  joined = false
 
   color1 = 'rgb(0,20,255)'
   color2 = 'rgb(0,120,0)'

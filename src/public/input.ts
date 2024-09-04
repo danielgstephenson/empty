@@ -6,6 +6,7 @@ export class Input {
   mousePosition = Vec2(0, 0)
   mouseButtons = new Map<number, boolean>()
   renderer: Renderer
+  active = false
 
   constructor (renderer: Renderer) {
     this.renderer = renderer
@@ -23,6 +24,7 @@ export class Input {
 
   onkeydown (event: KeyboardEvent): void {
     this.keyboard.set(event.code, true)
+    this.active = true
   }
 
   onkeyup (event: KeyboardEvent): void {
@@ -45,6 +47,7 @@ export class Input {
   onmousedown (event: MouseEvent): void {
     this.mouseButtons.set(event.button, true)
     this.updateMousePosition(event)
+    this.active = true
   }
 
   onmouseup (event: MouseEvent): void {

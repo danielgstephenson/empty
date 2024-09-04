@@ -47,21 +47,26 @@ export class Game {
     this.reset()
     const io = getIo(this.config)
     io.on('connection', socket => {
-      console.log('connect:', socket.id)
       socket.emit('connected')
+      console.log('connect:', socket.id)
       const player = new Player(this, socket.id, this.getSmallPlayerTeam())
       socket.on('input', (input: InputSummary) => {
         const moveDir = input.moveDir ?? Vec2(0, 0)
-        player.guide.moveDir.x = moveDir.x ?? 0
-        player.guide.moveDir.y = moveDir.y ?? 0
+        if (player.guide != null) {
+          player.guide.moveDir.x = moveDir.x ?? 0
+          player.guide.moveDir.y = moveDir.y ?? 0
+        }
         const summary = new PlayerSummary(player)
         socket.emit('summary', summary)
       })
-      socket.on('click', () => {
-        // console.log('click')
+      socket.on('join', () => {
+        if (!player.joined) {
+          console.log('join:', socket.id)
+          player.join()
+        }
       })
       socket.on('disconnect', () => {
-        console.log('disconnect:', socket.id)
+        console.log('remove player:', socket.id)
         player.remove()
       })
     })
@@ -136,7 +141,7 @@ export class Game {
     })
   }
 
-  getSmallPlayerTeam (): 1 | 2 {
+  getSmallPlayerTeam (): Team {
     const count1 = this.getTeamPlayerCount(1)
     const count2 = this.getTeamPlayerCount(2)
     if (count1 === count2) return choose([1, 2])
@@ -146,7 +151,7 @@ export class Game {
   getTeamPlayerCount (team: number): number {
     let count = 0
     this.players.forEach(player => {
-      if (player.guide.team === team) count += 1
+      if (player.joined && player.team === team) count += 1
     })
     return count
   }
