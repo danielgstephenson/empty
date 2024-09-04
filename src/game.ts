@@ -150,8 +150,8 @@ export class Game {
 
   getTeamPlayerCount (team: number): number {
     let count = 0
-    this.players.forEach(player => {
-      if (player.joined && player.team === team) count += 1
+    this.guides.forEach(guide => {
+      if (guide.team === team) count += 1
     })
     return count
   }
